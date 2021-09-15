@@ -21,6 +21,7 @@ import (
 	"errors"
 	"sync"
 
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"sigs.k8s.io/vsphere-csi-driver/v2/pkg/csi/service/logger"
 
 	clientset "k8s.io/client-go/kubernetes"
@@ -148,18 +149,20 @@ func (m *defaultManager) DiscoverNode(ctx context.Context, nodeUUID string) erro
 func (m *defaultManager) GetNodeByName(ctx context.Context, nodeName string) (*vsphere.VirtualMachine, error) {
 	log := logger.GetLogger(ctx)
 	nodeUUID, found := m.nodeNameToUUID.Load(nodeName)
-	if !found {
-		log.Errorf("Node not found with nodeName %s", nodeName)
-		return nil, ErrNodeNotFound
+	if found {
+		if nodeUUID.(string) != "" {
+			return m.GetNode(ctx, nodeUUID.(string), nil)
+		}
+		log.Infof("Empty nodeUUID observed in cache for the node: %q", nodeName)
 	}
-	if nodeUUID != nil && nodeUUID.(string) != "" {
-		return m.GetNode(ctx, nodeUUID.(string), nil)
-	}
-	log.Infof("Empty nodeUUID observed in cache for the node: %q", nodeName)
 	k8snodeUUID, err := k8s.GetNodeUUID(ctx, m.k8sClient, nodeName,
 		m.useNodeUuid)
 	if err != nil {
-		log.Errorf("failed to get node UUID from node: %q. Err: %v", nodeName, err)
+		if apierrors.IsNotFound(err) {
+			log.Warnf("Node not existing with nodeName %s", nodeName)
+			return nil, ErrNodeNotFound
+		}
+		log.Errorf("failed to get providerId from node: %q. Err: %v", nodeName, err)
 		return nil, err
 	}
 	m.nodeNameToUUID.Store(nodeName, k8snodeUUID)

@@ -37,6 +37,7 @@ import (
 
 	"sigs.k8s.io/vsphere-csi-driver/v2/pkg/apis/migration"
 	"sigs.k8s.io/vsphere-csi-driver/v2/pkg/common/cns-lib/node"
+	cnsnode "sigs.k8s.io/vsphere-csi-driver/v2/pkg/common/cns-lib/node"
 	cnsvolume "sigs.k8s.io/vsphere-csi-driver/v2/pkg/common/cns-lib/volume"
 	cnsvsphere "sigs.k8s.io/vsphere-csi-driver/v2/pkg/common/cns-lib/vsphere"
 	cnsconfig "sigs.k8s.io/vsphere-csi-driver/v2/pkg/common/config"
@@ -1238,6 +1239,14 @@ func (c *controller) ControllerUnpublishVolume(ctx context.Context, req *csi.Con
 			node, err = c.nodeMgr.GetNodeByName(ctx, req.NodeId)
 		}
 		if err != nil {
+			if err == cnsnode.ErrNodeNotFound {
+				// Node is not existing anymore, we need to check if its VM is still existing.
+				// As the VM UUID is not known anymore, need to search by using NodeID as DNS Name
+				_, err = cnsvsphere.GetVirtualMachineByDNSName(ctx, req.NodeId)
+				if err == cnsvsphere.ErrVMNotFound {
+					return &csi.ControllerUnpublishVolumeResponse{}, "", nil
+				}
+			}
 			return nil, csifault.CSIInternalFault, logger.LogNewErrorCodef(log, codes.Internal,
 				"failed to find VirtualMachine for node:%q. Error: %v", req.NodeId, err)
 		}
