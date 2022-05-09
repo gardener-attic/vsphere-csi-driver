@@ -208,6 +208,10 @@ func (m *defaultManager) GetNode(ctx context.Context,
 		} else {
 			if err = m.DiscoverNode(ctx, nodeUUID); err != nil {
 				log.Errorf("failed to discover node with nodeUUID %s with err: %v", nodeUUID, err)
+				if err == vsphere.ErrVMNotFound {
+					log.Warnf("node not existing with nodeUUID %s", nodeUUID)
+					return nil, ErrNodeNotFound
+				}
 				return nil, err
 			}
 
