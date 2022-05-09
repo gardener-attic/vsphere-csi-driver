@@ -18,3 +18,19 @@ Documentation for vSphere CSI Driver is available here:
 ## Contributing
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for instructions on how to contribute.
+
+## Building fork
+
+- Update base docker images first:
+
+  ```bash
+  docker pull photon:4.0
+  docker pull gcr.io/cloud-provider-vsphere/extra/csi-driver-base:latest
+  ```
+
+- Build images
+
+  ```bash
+  cd images/driver-base; make build; cd ../..
+  make images
+  ```
