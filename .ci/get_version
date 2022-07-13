@@ -1,7 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
-if [[ "$(git rev-parse --abbrev-ref HEAD)" =~ "master" ]]; then
-  git log -1 --format=%h
-else
-  git describe --always 2>/dev/null
-fi
+cd "${CC_ROOT_DIR}/${SOURCE_PATH}"
+git describe --always 2>/dev/null
