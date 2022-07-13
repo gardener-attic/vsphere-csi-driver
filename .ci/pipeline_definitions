@@ -5,7 +5,7 @@ gardener-extension-provider-vsphere-csi-driver:
     traits:
       version:
         version_interface: 'callback'
-        read_callback: 'get_version'
+        read_callback: '.ci/get_version'
   jobs:
     head-update:
       steps:
