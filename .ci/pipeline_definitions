@@ -3,54 +3,40 @@ gardener-extension-provider-vsphere-csi-driver:
   base_definition:
     repo: ~
     traits:
+      publish:
+        oci-builder: 'docker-buildx'
+        platforms: ['linux/amd64']
+        dockerimages:
+          gardener-extension-provider-vsphere-csi-driver-base:
+            registry: 'gcr-readwrite'
+            image: 'eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base'
+            dockerfile: 'images/driver-base/Dockerfile'
+            tag_as_latest: true
+          gardener-extension-provider-vsphere-csi-driver:
+            registry: 'gcr-readwrite'
+            image: 'eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver'
+            dockerfile: 'images/driver/Dockerfile'
+            build_args:
+              BASE_IMAGE: "eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base:latest"
+          gardener-extension-provider-vsphere-csi-syncer:
+            registry: 'gcr-readwrite'
+            image: 'eu.gcr.io/gardener-project/patches/vsphere-csi-driver/syncer'
+            dockerfile: 'images/syncer/Dockerfile'
+            build_args:
+              BASE_IMAGE: "eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base:latest"
       version:
         version_interface: 'callback'
         read_callback: '.ci/get_version'
         write_callback: '/bin/cat'
   jobs:
-    head-update:
-      traits:
-        publish:
-          oci-builder: 'docker-buildx'
-          platforms: ['linux/amd64']
-          dockerimages:
-            gardener-extension-provider-vsphere-csi-driver-base:
-              registry: 'gcr-readwrite'
-              image: 'eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base'
-              dockerfile: 'images/driver-base/Dockerfile'
-              tag_as_latest: true
-            gardener-extension-provider-vsphere-csi-driver:
-              registry: 'gcr-readwrite'
-              image: 'eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver'
-              dockerfile: 'images/driver/Dockerfile'
-              build_args:
-                BASE_IMAGE: "eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base:latest"
-            gardener-extension-provider-vsphere-csi-syncer:
-              registry: 'gcr-readwrite'
-              image: 'eu.gcr.io/gardener-project/patches/vsphere-csi-driver/syncer'
-              dockerfile: 'images/syncer/Dockerfile'
-              build_args:
-                BASE_IMAGE: "eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base:latest"
-#      steps:
-#        build_release: ~
-#        driver-base:
-#        driver:
-#        syncer:
+    head-update: ~
     pull-request:
       traits:
         pull-request: ~
     release:
-      steps:
-        build_release: ~
-#      traits:
-#        version:
-#          version_interface: 'callback'
-#          preprocess: 'finalize'
-#          read_callback: 'get_version'
-#        slack:
-#          default_channel: 'internal_scp_workspace'
-#          channel_cfgs:
-#            internal_scp_workspace:
-#              channel_name: 'C0170QTBJUW' # gardener-mcm
-#              slack_cfg_name: 'scp_workspace'
-#        component_descriptor: ~
+      traits:
+        component_descriptor: ~
+        version:
+          preprocess: 'finalize' # recommended
+        release:
+          nextversion: 'bump_minor'
