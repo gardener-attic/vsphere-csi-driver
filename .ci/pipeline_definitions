@@ -1,0 +1,51 @@
+gardener-extension-provider-vsphere-csi-driver:
+  template: 'default'
+  base_definition:
+    repo: ~
+    traits:
+      publish:
+        oci-builder: 'docker-buildx'
+        platforms: ['linux/amd64']
+        dockerimages:
+          gardener-extension-provider-vsphere-csi-driver-base:
+            registry: 'gcr-readwrite'
+            image: 'eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base'
+            dockerfile: 'images/driver-base/Dockerfile'
+            tag_as_latest: true
+          gardener-extension-provider-vsphere-csi-driver:
+            registry: 'gcr-readwrite'
+            image: 'eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver'
+            dockerfile: 'images/driver/Dockerfile'
+            build_args:
+              BASE_IMAGE: "eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base:latest"
+          gardener-extension-provider-vsphere-csi-syncer:
+            registry: 'gcr-readwrite'
+            image: 'eu.gcr.io/gardener-project/patches/vsphere-csi-driver/syncer'
+            dockerfile: 'images/syncer/Dockerfile'
+            build_args:
+              BASE_IMAGE: "eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base:latest"
+      version:
+        version_interface: 'callback'
+        read_callback: '.ci/get_version'
+        write_callback: '/bin/cat'
+  jobs:
+    head-update:
+      traits:
+        version:
+          preprocess: 'inject-commit-hash'
+          version_interface: 'callback'
+          read_callback: '.ci/get_version'
+          write_callback: '/bin/cat'
+    pull-request:
+      traits:
+        pull-request: ~
+    release:
+      traits:
+        component_descriptor: ~
+        version:
+          preprocess: 'noop'
+          version_interface: 'callback'
+          read_callback: '.ci/get_version'
+          write_callback: '/bin/cat'
+        release:
+          nextversion: 'noop'
