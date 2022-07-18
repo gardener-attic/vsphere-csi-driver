@@ -11,9 +11,6 @@ PATCH=$(echo $base | sed -r "s/$RE/\3/")
 GARDENER=$(echo $base | sed -r "s/$RE/\5/")
 BUILD=$(echo $base | sed -r "s/$RE/\6/")
 
-if [ -z "$GARDENER"] ; then
-  let PATCH+=1
-fi
 let GARDENER+=1
 
 echo "v$MAJOR.$MINOR.$PATCH-gardener$GARDENER"
