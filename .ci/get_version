@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+
+cd "${CC_ROOT_DIR}/${SOURCE_PATH}"
+base="$(git describe --tags 2>/dev/null)"
+RE='[^0-9]*([0-9]+)\.([0-9]+)\.([0-9]+)(-gardener([0-9]+))?([0-9A-Za-z-]*)'
+
+MAJOR=$(echo $base | sed -r "s/$RE/\1/")
+MINOR=$(echo $base | sed -r "s/$RE/\2/")
+PATCH=$(echo $base | sed -r "s/$RE/\3/")
+GARDENER=$(echo $base | sed -r "s/$RE/\5/")
+BUILD=$(echo $base | sed -r "s/$RE/\6/")
+
+let GARDENER+=1
+
+echo "v$MAJOR.$MINOR.$PATCH-gardener$GARDENER"
+
