@@ -29,7 +29,10 @@ gardener-extension-provider-vsphere-csi-driver:
         read_callback: '.ci/get_version'
         write_callback: '/bin/cat'
   jobs:
-    head-update: ~
+    head-update:
+      traits:
+        version:
+          preprocess: 'inject-commit-hash'
     pull-request:
       traits:
         pull-request: ~
@@ -37,6 +40,6 @@ gardener-extension-provider-vsphere-csi-driver:
       traits:
         component_descriptor: ~
         version:
-          preprocess: 'finalize' # recommended
+          preprocess: 'noop'
         release:
-          nextversion: 'bump_minor'
+          nextversion: 'noop'
