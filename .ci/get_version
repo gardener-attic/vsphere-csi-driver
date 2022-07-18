@@ -10,12 +10,11 @@ MINOR=$(echo $base | sed -r "s/$RE/\2/")
 PATCH=$(echo $base | sed -r "s/$RE/\3/")
 GARDENER=$(echo $base | sed -r "s/$RE/\5/")
 BUILD=$(echo $base | sed -r "s/$RE/\6/")
-HASH=$(git rev-parse --short HEAD)
 
 if [ -z "$GARDENER"] ; then
   let PATCH+=1
 fi
 let GARDENER+=1
 
-echo v"$MAJOR.$MINOR.$PATCH"-gardener$GARDENER
+echo "v$MAJOR.$MINOR.$PATCH-gardener$GARDENER"
 
