@@ -25,7 +25,7 @@ gardener-extension-provider-vsphere-csi-driver:
             dockerfile: 'images/driver/Dockerfile'
             build_args:
               BASE_IMAGE: "eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base:latest"
-              GOLANG_IMAGE: "golang:1:18"
+              GOLANG_IMAGE: "golang:1.18"
             resource_labels:
               - name: 'cloud.gardener.cnudie/responsibles'
                 value:
@@ -39,7 +39,7 @@ gardener-extension-provider-vsphere-csi-driver:
             dockerfile: 'images/syncer/Dockerfile'
             build_args:
               BASE_IMAGE: "eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base:latest"
-              GOLANG_IMAGE: "golang:1:18"
+              GOLANG_IMAGE: "golang:1.18"
             resource_labels:
               - name: 'cloud.gardener.cnudie/responsibles'
                 value:
