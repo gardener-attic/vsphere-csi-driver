@@ -12,13 +12,6 @@ gardener-extension-provider-vsphere-csi-driver:
             image: 'eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base'
             dockerfile: 'images/driver-base/Dockerfile'
             tag_as_latest: true
-            resource_labels:
-              - name: 'cloud.gardener.cnudie/responsibles'
-                value:
-                  - type: 'githubUser'
-                    username: 'briantopping'
-                  - type: 'emailAddress'
-                    email: 'brian.topping@sap.com'
           gardener-extension-provider-vsphere-csi-driver:
             registry: 'gcr-readwrite'
             image: 'eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver'
@@ -26,13 +19,6 @@ gardener-extension-provider-vsphere-csi-driver:
             build_args:
               BASE_IMAGE: "eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base:latest"
               GOLANG_IMAGE: "golang:1.18"
-            resource_labels:
-              - name: 'cloud.gardener.cnudie/responsibles'
-                value:
-                  - type: 'githubUser'
-                    username: 'briantopping'
-                  - type: 'emailAddress'
-                    email: 'brian.topping@sap.com'
           gardener-extension-provider-vsphere-csi-syncer:
             registry: 'gcr-readwrite'
             image: 'eu.gcr.io/gardener-project/patches/vsphere-csi-driver/syncer'
@@ -40,13 +26,6 @@ gardener-extension-provider-vsphere-csi-driver:
             build_args:
               BASE_IMAGE: "eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base:latest"
               GOLANG_IMAGE: "golang:1.18"
-            resource_labels:
-              - name: 'cloud.gardener.cnudie/responsibles'
-                value:
-                  - type: 'githubUser'
-                    username: 'briantopping'
-                  - type: 'emailAddress'
-                    email: 'brian.topping@sap.com'
       version:
         version_interface: 'callback'
         read_callback: '.ci/get_version'
