@@ -18,14 +18,14 @@ gardener-extension-provider-vsphere-csi-driver:
             dockerfile: 'images/driver/Dockerfile'
             build_args:
               BASE_IMAGE: "eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base:latest"
-              GOLANG_IMAGE: "golang:1.18"
+              GOLANG_IMAGE: "golang:1.19"
           gardener-extension-provider-vsphere-csi-syncer:
             registry: 'gcr-readwrite'
             image: 'eu.gcr.io/gardener-project/patches/vsphere-csi-driver/syncer'
             dockerfile: 'images/syncer/Dockerfile'
             build_args:
               BASE_IMAGE: "eu.gcr.io/gardener-project/patches/vsphere-csi-driver/driver-base:latest"
-              GOLANG_IMAGE: "golang:1.18"
+              GOLANG_IMAGE: "golang:1.19"
       version:
         version_interface: 'callback'
         read_callback: '.ci/get_version'
@@ -33,6 +33,10 @@ gardener-extension-provider-vsphere-csi-driver:
   jobs:
     head-update:
       traits:
+        notifications:
+          default:
+            on_error:
+              triggering_policy: 'always'
         version:
           preprocess: 'inject-commit-hash'
           version_interface: 'callback'
